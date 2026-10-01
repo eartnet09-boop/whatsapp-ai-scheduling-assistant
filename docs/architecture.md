@@ -49,9 +49,9 @@ also available as a static page: [architecture.html](architecture.html).
 | 5 | Mensagem Ignorada | `noOp` | End of the line for filtered messages | any | passthrough | n8n default |
 | 6 | Verifica Cartão Enviado | `redis` | `GET cartao_enviado:<senderAlt>` | normalized fields | `cartaoEnviado` | `onError: continueRegularOutput` |
 | 7 | Já Recebeu Cartão? | `if` | Empty value → customer never got the card | Redis result | `true` (empty) → send card, `false` → agent | n8n default |
-| 8 | Buscar Cartão de Visita | `postgres` | `SELECT imagem_base64, mimetype, filename, legenda … ORDER BY id DESC LIMIT 1` | — | card row | `onError: continueRegularOutput` |
+| 8 | Buscar Cartão de Visita | `postgres` | `SELECT imagem_base64, mimetype, filename, legenda … ORDER BY id DESC LIMIT 1` | — | card row | `retryOnFail` + `onError: continueRegularOutput` |
 | 9 | Enviar Cartão via WAHA | `httpRequest` | `POST /api/sendImage` with base64 image + caption | Postgres row + `Filtro de Dados` | WAHA response | `onError: continueRegularOutput` |
-| 10 | Marca Cartão Enviado | `redis` | `SET cartao_enviado:<senderAlt> = 1` (no TTL) | `Filtro de Dados` | Redis reply | `onError: continueRegularOutput` |
+| 10 | Marca Cartão Enviado | `redis` | `SET cartao_enviado:<senderAlt> = 1` (no TTL) | `Filtro de Dados` | Redis reply | `retryOnFail` + `onError: continueRegularOutput` |
 | 11 | Assistente IA | `agent` | Nero: answers, triages, drives the calendar tools | user prompt + system prompt + memory | `output` text | n8n default |
 | 12 | Modelo de Linguagem (Groq) | `lmChatGroq` | `openai/gpt-oss-120b` chat model | Groq credential | model connection (`ai_languageModel`) | n8n default |
 | 13 | Memória de Conversa (Redis) | `memoryRedisChat` | Session per `senderAlt`, TTL 1 h, 15-message window | Redis credential | memory connection (`ai_memory`) | n8n default |
@@ -65,7 +65,9 @@ also available as a static page: [architecture.html](architecture.html).
 Error handling: `continueRegularOutput` keeps the execution flowing when a
 node fails, returning an empty/errored item instead of stopping the workflow.
 It is used only on the business-card path (nodes 6, 8, 9, 10) so that a Redis
-or PostgreSQL outage never blocks the conversation.
+or PostgreSQL outage never blocks the conversation. Nodes 8 (`Buscar Cartão de
+Visita`) and 10 (`Marca Cartão Enviado`) additionally set `retryOnFail`, so a
+transient Postgres/Redis error is retried before the fallback kicks in.
 
 ## Design decisions
 
