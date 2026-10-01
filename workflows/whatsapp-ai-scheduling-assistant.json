@@ -1,0 +1,733 @@
+{
+  "name": "WhatsApp AI Scheduling Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "replace-with-a-long-random-path",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1600,
+        -272
+      ],
+      "id": "811db8f1-9be0-4815-83aa-1ecfbab2b07c",
+      "name": "Webhook",
+      "notes": "Defina um caminho longo e aleatório. Configure este URL como webhook na WAHA."
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9cdfc893-9924-47e3-955e-da6a649e77a3",
+              "name": "pushName",
+              "type": "string",
+              "value": "={{ $json.body.payload._data.Info.PushName }}"
+            },
+            {
+              "id": "93d7033e-bcf6-4e9e-bd4b-77719a4c6210",
+              "name": "senderAlt",
+              "type": "string",
+              "value": "={{ $json.body.payload._data.Info.SenderAlt }}"
+            },
+            {
+              "id": "807e8a07-8ada-499c-81bd-1c5a78e015f9",
+              "name": "isFromMe",
+              "type": "boolean",
+              "value": "={{ $json.body.payload._data.Info.IsFromMe }}"
+            },
+            {
+              "id": "7473fbf2-f2a2-4c1f-a81e-257a65e49d8b",
+              "name": "body",
+              "type": "string",
+              "value": "={{ $json.body.payload.body }}"
+            },
+            {
+              "id": "8b1df2f6-03ce-4ddf-9ea9-7fc71a5e52a0",
+              "name": "timestamp",
+              "type": "number",
+              "value": "={{ $json.body.payload.timestamp }}"
+            },
+            {
+              "id": "e095c182-96ff-4783-8c23-0f9446ac0617",
+              "name": "event",
+              "type": "string",
+              "value": "={{ $json.body.event }}"
+            },
+            {
+              "id": "46b8c565-830a-4f57-baa2-e2f4ae08a2a1",
+              "name": "session",
+              "type": "string",
+              "value": "={{ $json.body.session }}"
+            },
+            {
+              "id": "e9be6ccf-ae64-4eb3-8fc5-d1e316f8d6db",
+              "name": "chat",
+              "type": "string",
+              "value": "={{ $json.body.payload._data.Info.Chat }}"
+            },
+            {
+              "id": "8f57edb9-f9f5-4454-b01d-0b96bbc10228",
+              "name": "sender",
+              "type": "string",
+              "value": "={{ $json.body.payload._data.Info.Sender }}"
+            },
+            {
+              "id": "dfd49d43-ff0b-49b3-8d09-915093720610",
+              "name": "hasMedia",
+              "type": "boolean",
+              "value": "={{ $json.body.payload.hasMedia }}"
+            },
+            {
+              "id": "249e65dc-f17c-4b5d-91d2-8d78b6e33ce8",
+              "name": "type",
+              "type": "string",
+              "value": "={{ $json.body.payload._data.Info.Type }}"
+            },
+            {
+              "id": "8743e9dc-082b-4155-87a5-27fb345d6631",
+              "name": "source",
+              "type": "string",
+              "value": "={{ $json.body.payload.source }}"
+            },
+            {
+              "id": "ddd8cd90-66fe-4979-9f1c-668a823821c0",
+              "name": "ackName",
+              "type": "string",
+              "value": "={{ $json.body.payload.ackName }}"
+            },
+            {
+              "id": "b3a7c837-ba19-49d2-93f4-567f6a48cfbe",
+              "name": "ack",
+              "type": "number",
+              "value": "={{ $json.body.payload.ack }}"
+            },
+            {
+              "id": "5991d696-83a7-4e2f-b301-de67bb5c92e8",
+              "name": "meuLid",
+              "type": "string",
+              "value": "={{ $json.body.me.lid }}"
+            },
+            {
+              "id": "6b04c298-6b42-47aa-a865-38580abb0308",
+              "name": "telefoneLimpo",
+              "type": "string",
+              "value": "={{ $json.body.payload._data.Info.SenderAlt.split('@')[0] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c067acad-224c-40c8-9cf9-305a46348a0d",
+      "name": "Filtro de Dados",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1296,
+        -272
+      ],
+      "notes": "Extrai e padroniza os campos relevantes recebidos do webhook da WAHA."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "43cfe362-c026-464d-8aa3-373b0e5c5b96",
+              "leftValue": "={{ $json.chat }}",
+              "operator": {
+                "operation": "contains",
+                "type": "string"
+              },
+              "rightValue": "@g.us"
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          }
+        },
+        "options": {}
+      },
+      "id": "73aebcdc-c0b1-42b2-9006-f2e70d17a9af",
+      "name": "Verifica se é Grupo",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -992,
+        -272
+      ],
+      "notes": "Filtra mensagens de grupo (chat termina em @g.us)."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "e2fe32a0-4e95-410d-954a-df7e5ebfdbf2",
+              "leftValue": "={{ $json.isFromMe }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              },
+              "rightValue": false
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          }
+        },
+        "options": {}
+      },
+      "id": "a56c0166-0c3e-4993-8985-d2d4442bc3fd",
+      "name": "Verifica se é Mensagem Própria",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -640,
+        -144
+      ],
+      "notes": "Ignora mensagens enviadas pelo próprio bot (isFromMe = true), evitando loops."
+    },
+    {
+      "parameters": {},
+      "id": "a297b73d-b9fe-4d6b-8908-210142614e0f",
+      "name": "Mensagem Ignorada",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -656,
+        -352
+      ],
+      "notes": "Fim de fluxo para mensagens de grupo ou do próprio bot — nenhuma ação necessária."
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=##Dados para atendimento\nId do cliente: {{ $('Filtro de Dados').item.json.senderAlt }}\nData e hora atual: {{ $now }}\nMensagem para responder:\n{{ $('Filtro de Dados').item.json.body }}",
+        "options": {
+          "systemMessage": "Você é Nero, assistente virtual da EAR Automação, uma empresa especializada em automações e orquestração de agentes de inteligência artificial.\n\nQuando um cliente fala com você pela primeira vez, ele já recebe automaticamente (antes da sua resposta) o cartão de visita da empresa com uma breve apresentação em imagem. Por isso, você NUNCA precisa se apresentar formalmente, repetir seu nome ou explicar o que é a EAR Automação logo de cara — vá direto ao ponto, respondendo com naturalidade à mensagem do cliente.\n\nVocê tem três papéis complementares:\n1. Fazer uma triagem profissional de cada novo contato, entendendo o que o cliente precisa antes de encaminhá-lo.\n2. Atender o público tirando dúvidas sobre a EAR Automação — o que a empresa faz, como funcionam automações e orquestração de agentes de IA, e como isso pode ajudar o cliente.\n3. Ajudar a criar, consultar, alterar ou cancelar agendamentos (reuniões, calls, atendimentos) usando o Google Calendar.\n\n## O que é a EAR Automação (use isso para responder diretamente, sem precisar perguntar nada antes)\nA EAR Automação é uma empresa que cria automações e orquestra agentes de inteligência artificial para negócios. Na prática, isso significa conectar sistemas, atendimento (como WhatsApp), agenda e outras ferramentas a agentes de IA que executam tarefas sozinhos — responder clientes, marcar/gerenciar compromissos, organizar informações, entre outros processos repetitivos — para o cliente ganhar tempo e escalar o atendimento sem precisar contratar mais gente para tarefas operacionais. Você PODE e DEVE explicar isso com suas próprias palavras sempre que o cliente perguntar o que a empresa faz, sem pedir mais informações antes.\n\n## REGRA MÁXIMA (a mais importante de todas): responda antes de perguntar\nÉ PROIBIDO devolver uma pergunta genérica de triagem (tipo 'qual é sua dúvida?', 'em que posso ajudar?', 'o que você precisa?') quando o cliente JÁ fez uma pergunta específica ou JÁ disse o que quer. Isso NUNCA é aceitável, mesmo que você não tenha 100% dos detalhes — responda com o que você sabe primeiro, e só depois, se precisar, complemente com uma pergunta.\n\nExemplos do que fazer e do que NUNCA fazer:\n- Cliente pergunta: 'O que a EAR faz?' → CORRETO: explicar em 2-3 frases o que a empresa faz (veja a seção acima). ERRADO: perguntar 'qual sua dúvida?' ou 'o que você precisa?' — isso é uma falha grave, pois a pergunta já foi feita e já pode ser respondida.\n- Cliente pergunta: 'Vocês fazem automação de WhatsApp?' → CORRETO: responder que sim, dar um exemplo breve. ERRADO: perguntar o que ele precisa antes de confirmar algo tão simples.\n- Cliente diz: 'Quero agendar uma reunião' → CORRETO: seguir direto para o fluxo de agendamento (perguntar dia/horário). ERRADO: perguntar de forma genérica 'qual é sua dúvida?' quando ele já disse claramente o que quer.\n- Cliente manda algo vago, tipo só 'Oi' ou uma figurinha sem contexto → Aí sim é válido perguntar naturalmente o que ele procura.\n\nAntes de escrever qualquer resposta, sempre se pergunte: 'o cliente já disse o suficiente para eu responder algo concreto agora?'. Se a resposta for sim, responda — nunca devolva a pergunta pra ele.\n\n## Regra crítica: nunca repita uma mensagem já enviada\n- Antes de responder, releia todo o histórico da conversa (fornecido pela memória) com atenção.\n- NUNCA envie de novo, com as mesmas palavras ou quase idênticas, uma mensagem que você já mandou nesta conversa (ex.: saudações ou perguntas genéricas repetidas a cada mensagem do cliente).\n- Se o cliente mandar uma mensagem vaga, um áudio/figurinha não suportado, ou repetir algo que ele mesmo já disse, NÃO reinicie a conversa do zero nem repita sua pergunta ou saudação anterior. Avance a conversa: peça uma informação específica que ainda falta, ou responda diretamente ao que for possível entender.\n- Trate cada resposta sua como parte contínua de uma única conversa — nunca como se fosse a primeira interação, a menos que o histórico realmente esteja vazio.\n\n## Triagem profissional (somente quando o motivo do contato realmente não estiver claro)\n1. Se a mensagem do cliente já deixa claro o que ele quer, pule direto para responder ou agir — sem triagem.\n2. Se o motivo do contato não estiver claro (mensagem vaga), pergunte de forma natural o que ele procura.\n3. Se parecer interesse real em contratar ou automatizar algo, depois de já ter respondido a dúvida inicial dele, você pode fazer 1-2 perguntas de qualificação, uma de cada vez (ex.: que tipo de negócio ele tem, o que quer automatizar).\n4. Nunca faça várias perguntas de uma vez nem pareça um formulário; converse naturalmente.\n5. Só sugira agendar uma reunião quando fizer sentido pelo contexto, sempre como opção, nunca como obrigação.\n\n## Postura e tom de voz\n- Comunique-se sempre como um profissional experiente, cordial e objetivo: direto, claro e sem jargão técnico desnecessário.\n- Use um português formal e cuidado (sem gírias, sem excesso de emojis, sem intimidade excessiva), mantendo-se acolhedor — você representa oficialmente a marca EAR Automação em todas as interações com o público.\n- Faça uma pergunta por vez quando precisar perguntar algo, e guie a conversa com naturalidade até o próximo passo.\n- Nunca pressione o cliente a agendar. Se ele só quiser informações, atenda com atenção e ofereça o agendamento como opção, não como obrigação.\n- Sobre coisas específicas que você genuinamente não sabe (preços exatos, prazos de projetos específicos, detalhes contratuais), seja honesto: diga que vai verificar com a equipe em vez de inventar. Isso NÃO se aplica a explicações gerais sobre o que é a EAR e o que ela faz — isso você sempre pode explicar com confiança, usando a seção acima.\n- Mantenha as respostas objetivas — evite textos longos demais no WhatsApp; prefira mensagens curtas, bem estruturadas e sem repetições desnecessárias.\n\n## Quando usar o Google Calendar\nUse as ferramentas de calendário somente quando o cliente pedir explicitamente para agendar, consultar horários, remarcar ou cancelar um compromisso, ou quando fizer sentido propor um agendamento e o cliente concordar.\n\nAntes de criar um evento, confirme que possui todas as informações necessárias:\n- Nome do compromisso ou serviço\n- Nome do cliente\n- Data\n- Horário de início\n- Horário de término\n\nSe faltar alguma informação, faça apenas as perguntas necessárias, uma de cada vez, antes de usar qualquer ferramenta — e nunca repita uma pergunta que o cliente já respondeu.\n\nAo utilizar uma ferramenta, aguarde o resultado antes de responder ao cliente.\n\nAo criar um evento no Google Calendar:\n- Preencha um título (Summary) curto e profissional. Exemplos:\n  🤝 Reunião de Diagnóstico - João\n  ⚙️ Consultoria de Automação - Maria\n  💬 Conversa Inicial - Carlos\n\n- Preencha a descrição (Description), quando possível, com:\nCliente:\nTelefone:\nServiço/Assunto:\nData:\nHorário:\nObservações:\n\nPara alterar um agendamento existente, primeiro localize o evento com 'Buscar Evento Específico' ou 'Buscar Todos os Eventos' para obter o Event ID, e então use a ferramenta 'Atualizar Evento'.\n\nNunca invente datas, horários, nomes, IDs ou preços/prazos que você não tenha certeza.\n\nSomente confirme o agendamento (criação, alteração ou cancelamento) se a ferramenta retornar sucesso. Se ocorrer um erro, explique de forma simples e profissional, e ajude o cliente a tentar novamente."
+        }
+      },
+      "id": "9e2c3e1c-8b79-4077-b748-fac6ad7793b1",
+      "name": "Assistente IA",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -352,
+        -224
+      ],
+      "notes": "Agente principal, representa a EAR Automação: tira dúvidas sobre a empresa e cuida de agendamentos via Google Calendar."
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "id": "eea01018-a869-4de8-ae7c-7da69269142f",
+      "name": "Modelo de Linguagem (Groq)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        208
+      ],
+      "notes": "Requer credencial Groq API."
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Filtro de Dados').item.json.senderAlt }}",
+        "sessionTTL": 3600,
+        "contextWindowLength": 15
+      },
+      "id": "56c4606e-21eb-447b-870a-50fed5b17342",
+      "name": "Memória de Conversa (Redis)",
+      "type": "@n8n/n8n-nodes-langchain.memoryRedisChat",
+      "typeVersion": 1.6,
+      "position": [
+        -416,
+        208
+      ],
+      "notes": "Requer credencial Redis. Sessão por cliente (senderAlt), TTL 1h, janela de 15 mensagens."
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_CALENDAR_ID"
+        },
+        "start": "={{ $fromAI('Start', 'Data e hora de início no formato Datetime. TZ -03:00', 'string') }}",
+        "end": "={{ $fromAI('End', 'Data e hora de término no formato Datetime. TZ -03:00', 'string') }}",
+        "additionalFields": {
+          "description": "={{ $fromAI('Description', 'Descrição do evento contendo cliente, telefone, serviço, data, horário e observações.', 'string') }}",
+          "summary": "={{ $fromAI('Summary', 'Título curto e profissional do evento.', 'string') }}"
+        }
+      },
+      "id": "d2bfd2b4-d1ad-40be-8740-a414e4aa2ebe",
+      "name": "Criar Evento",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -240,
+        80
+      ],
+      "notes": "Requer credencial Google Calendar OAuth2."
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_CALENDAR_ID"
+        },
+        "returnAll": true,
+        "options": {
+          "orderBy": "startTime"
+        }
+      },
+      "id": "c1330836-b021-4f33-8ae5-cfb10cca9f06",
+      "name": "Buscar Todos os Eventos",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -128,
+        80
+      ],
+      "notes": "Requer credencial Google Calendar OAuth2."
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_CALENDAR_ID"
+        },
+        "eventId": "={{ $fromAI('Event_ID', \"Event ID específico retornado em 'Buscar Todos os Eventos'.\", 'string') }}",
+        "options": {}
+      },
+      "id": "6381330b-29cd-4dd6-81d9-ec3b414420ff",
+      "name": "Buscar Evento Específico",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -16,
+        80
+      ],
+      "notes": "Requer credencial Google Calendar OAuth2."
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_CALENDAR_ID"
+        },
+        "eventId": "={{ $fromAI('Event_ID', 'ID do evento a ser atualizado, obtido em Buscar Evento Específico ou Buscar Todos os Eventos.', 'string') }}",
+        "updateFields": {
+          "description": "={{ $fromAI('Description', 'Nova descrição do evento, se estiver sendo alterada.', 'string') }}",
+          "end": "={{ $fromAI('End', 'Nova data/hora de término no formato Datetime, se estiver sendo alterada. TZ -03:00', 'string') }}",
+          "start": "={{ $fromAI('Start', 'Nova data/hora de início no formato Datetime, se estiver sendo alterada. TZ -03:00', 'string') }}",
+          "summary": "={{ $fromAI('Summary', 'Novo título do evento, se estiver sendo alterado.', 'string') }}"
+        }
+      },
+      "id": "144a0a81-068e-4581-856b-18d5dca34ea5",
+      "name": "Atualizar Evento",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        112,
+        80
+      ],
+      "notes": "Requer credencial Google Calendar OAuth2."
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_CALENDAR_ID"
+        },
+        "eventId": "={{ $fromAI('Event_ID', \"Event ID específico retornado em 'Buscar Todos os Eventos'.\", 'string') }}",
+        "options": {}
+      },
+      "id": "7918e3ef-3bd8-43ce-8d23-136de165a993",
+      "name": "Cancelar Evento",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        256,
+        80
+      ],
+      "notes": "Requer credencial Google Calendar OAuth2."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://YOUR-WAHA-HOST/api/sendText",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  chatId: $('Filtro de Dados').item.json.senderAlt,\n  id: null,\n  reply_to: null,\n  text: $json.output,\n  linkPreview: true,\n  linkPreviewHighQuality: false,\n  session: $('Filtro de Dados').item.json.session\n}) }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "f7c9c089-9690-4587-83b0-e644e528c8a8",
+      "name": "Enviar Resposta via WAHA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        176,
+        -224
+      ],
+      "notes": "Requer credencial Header Auth para a API da WAHA."
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "cartaoEnviado",
+        "key": "=cartao_enviado:{{ $json.senderAlt }}",
+        "options": {}
+      },
+      "id": "2e073c69-336d-485a-a315-b8db53a78aea",
+      "name": "Verifica Cartão Enviado",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -704,
+        256
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Requer credencial Redis (a mesma do nó de memória). Verifica se esse cliente já recebeu o cartão de visita alguma vez."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a1a1a1a1-0001-0001-0001-a1a1a1a1a1a1",
+              "leftValue": "={{ $json.cartaoEnviado }}",
+              "operator": {
+                "operation": "empty",
+                "type": "string"
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "2f319c14-1ce0-4ad5-8104-0cad4196fc60",
+      "name": "Já Recebeu Cartão?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1504,
+        64
+      ],
+      "notes": "Verdadeiro (vazio) = nunca recebeu → envia o cartão. Falso = já recebeu antes → vai direto para o Assistente IA."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT imagem_base64, mimetype, filename, legenda\nFROM cartao_visita\nORDER BY id DESC\nLIMIT 1;",
+        "options": {}
+      },
+      "id": "5f145a8d-ca00-4be7-b072-ac6c263e7b9e",
+      "name": "Buscar Cartão de Visita",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        -1296,
+        48
+      ],
+      "retryOnFail": true,
+      "onError": "continueRegularOutput",
+      "notes": "Requer credencial Postgres. Busca a imagem (base64) e legenda mais recentes cadastradas na tabela cartao_visita."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://YOUR-WAHA-HOST/api/sendImage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  chatId: $('Filtro de Dados').item.json.senderAlt,\n  session: $('Filtro de Dados').item.json.session,\n  file: {\n    mimetype: $('Buscar Cartão de Visita').item.json.mimetype,\n    data: $('Buscar Cartão de Visita').item.json.imagem_base64\n  },\n  caption: $('Buscar Cartão de Visita').item.json.legenda\n}) }}",
+        "options": {
+          "timeout": 20000
+        }
+      },
+      "id": "9d34c509-e78d-4d84-bc9b-fedf006a7c31",
+      "name": "Enviar Cartão via WAHA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1136,
+        48
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Requer credencial Header Auth para a API da WAHA (a mesma do envio de texto). Envia a imagem do cartão de visita + legenda de apresentação."
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "=cartao_enviado:{{ $('Filtro de Dados').item.json.senderAlt }}",
+        "value": "1",
+        "keyType": "string"
+      },
+      "id": "69f82362-d799-4582-b998-7aa60423881e",
+      "name": "Marca Cartão Enviado",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -912,
+        48
+      ],
+      "retryOnFail": true,
+      "onError": "continueRegularOutput",
+      "notes": "Requer credencial Redis. Marca permanentemente que esse cliente já recebeu o cartão, para nunca reenviar."
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Filtro de Dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro de Dados": {
+      "main": [
+        [
+          {
+            "node": "Verifica se é Grupo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verifica se é Grupo": {
+      "main": [
+        [
+          {
+            "node": "Mensagem Ignorada",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verifica se é Mensagem Própria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verifica se é Mensagem Própria": {
+      "main": [
+        [
+          {
+            "node": "Mensagem Ignorada",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verifica Cartão Enviado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assistente IA": {
+      "main": [
+        [
+          {
+            "node": "Enviar Resposta via WAHA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Modelo de Linguagem (Groq)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Assistente IA",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memória de Conversa (Redis)": {
+      "ai_memory": [
+        [
+          {
+            "node": "Assistente IA",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar Evento": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistente IA",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Todos os Eventos": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistente IA",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Evento Específico": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistente IA",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualizar Evento": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistente IA",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cancelar Evento": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistente IA",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verifica Cartão Enviado": {
+      "main": [
+        [
+          {
+            "node": "Já Recebeu Cartão?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Já Recebeu Cartão?": {
+      "main": [
+        [
+          {
+            "node": "Buscar Cartão de Visita",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Assistente IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Cartão de Visita": {
+      "main": [
+        [
+          {
+            "node": "Enviar Cartão via WAHA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Cartão via WAHA": {
+      "main": [
+        [
+          {
+            "node": "Marca Cartão Enviado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marca Cartão Enviado": {
+      "main": [
+        [
+          {
+            "node": "Assistente IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "active": false
+}
