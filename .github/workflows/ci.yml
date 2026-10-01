@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Validate workflow export (structure + secret scan)
+        run: python scripts/validate_workflow.py
+
+      - name: Validate every JSON file
+        run: |
+          set -e
+          find . -name '*.json' -not -path './.git/*' -print0 |
+            while IFS= read -r -d '' f; do
+              echo "checking $f"
+              python3 -m json.tool "$f" > /dev/null
+            done
