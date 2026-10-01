@@ -1,0 +1,25 @@
+{
+  "event": "message",
+  "session": "default",
+  "me": {
+    "lid": "987654321@lid"
+  },
+  "payload": {
+    "body": "Olá! Gostaria de agendar uma reunião para falar sobre automação.",
+    "timestamp": 1759339200,
+    "source": "web",
+    "ack": 1,
+    "ackName": "received",
+    "hasMedia": false,
+    "_data": {
+      "Info": {
+        "PushName": "Cliente Exemplo",
+        "SenderAlt": "5500000000000@c.us",
+        "Sender": "5500000000000@c.us",
+        "Chat": "5500000000000@c.us",
+        "IsFromMe": false,
+        "Type": "chat"
+      }
+    }
+  }
+}
