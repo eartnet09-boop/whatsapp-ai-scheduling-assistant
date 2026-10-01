@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WhatsApp AI Scheduling Assistant — Architecture</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1f2937;
+    --muted: #6b7280;
+    --panel: #f8fafc;
+    --border: #e2e8f0;
+    --line: #8494a8;
+    --node-bg: #eef4ff;
+    --node-st: #3b6fd4;
+    --filter-bg: #fff4e0;
+    --filter-st: #d98c1f;
+    --ignore-bg: #fdecec;
+    --ignore-st: #c0392b;
+    --card-bg: #eaf7ee;
+    --card-st: #2e8b57;
+    --ai-bg: #f3e9ff;
+    --ai-st: #7b4bbf;
+    --aux-bg: #f4f6f8;
+    --aux-st: #6b7280;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f172a;
+      --fg: #e2e8f0;
+      --muted: #94a3b8;
+      --panel: #1e293b;
+      --border: #334155;
+      --line: #94a3b8;
+      --node-bg: #1e3a8a;
+      --node-st: #93b4f5;
+      --filter-bg: #4a3208;
+      --filter-st: #f0b357;
+      --ignore-bg: #4a1d1d;
+      --ignore-st: #f08a8a;
+      --card-bg: #103c2a;
+      --card-st: #6ee7a8;
+      --ai-bg: #35265c;
+      --ai-st: #c4a4f0;
+      --aux-bg: #1f2937;
+      --aux-st: #94a3b8;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1.25rem 3rem;
+    background: var(--bg);
+    color: var(--fg);
+    font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 1060px; margin: 0 auto; }
+  h1 { font-size: 1.5rem; margin: 0 0 .25rem; }
+  p.lead { color: var(--muted); margin: 0 0 1.5rem; }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    overflow-x: auto;
+  }
+  svg { display: block; min-width: 980px; width: 100%; height: auto; }
+  rect { stroke-width: 1.6; rx: 8; }
+  rect.n { fill: var(--node-bg); stroke: var(--node-st); }
+  rect.f { fill: var(--filter-bg); stroke: var(--filter-st); }
+  rect.i { fill: var(--ignore-bg); stroke: var(--ignore-st); }
+  rect.c { fill: var(--card-bg); stroke: var(--card-st); }
+  rect.a { fill: var(--ai-bg); stroke: var(--ai-st); }
+  rect.x { fill: var(--aux-bg); stroke: var(--aux-st); }
+  text.t { fill: var(--fg); font: 600 13px system-ui, sans-serif; text-anchor: middle; }
+  text.s { fill: var(--muted); font: 400 11px system-ui, sans-serif; text-anchor: middle; }
+  text.e { fill: var(--muted); font: 400 11px system-ui, sans-serif; }
+  path.edge { stroke: var(--line); stroke-width: 1.6; fill: none; }
+  .legend { display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; margin-top: 1rem; }
+  .legend span { display: inline-flex; align-items: center; gap: .5rem; font-size: .85rem; color: var(--muted); }
+  .swatch { width: 14px; height: 14px; border-radius: 4px; border: 1.5px solid; display: inline-block; }
+  .sw-n { background: var(--node-bg); border-color: var(--node-st); }
+  .sw-f { background: var(--filter-bg); border-color: var(--filter-st); }
+  .sw-i { background: var(--ignore-bg); border-color: var(--ignore-st); }
+  .sw-c { background: var(--card-bg); border-color: var(--card-st); }
+  .sw-a { background: var(--ai-bg); border-color: var(--ai-st); }
+  .sw-x { background: var(--aux-bg); border-color: var(--aux-st); }
+  footer { margin-top: 1.5rem; font-size: .85rem; color: var(--muted); }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <h1>WhatsApp AI Scheduling Assistant — architecture</h1>
+  <p class="lead">Static, self-contained diagram of the n8n workflow (19 nodes). Mirrors <a href="architecture.md">docs/architecture.md</a>; no scripts, no external resources.</p>
+
+  <div class="panel">
+    <svg viewBox="0 0 1020 820" role="img" aria-label="Flowchart of the WhatsApp AI scheduling assistant workflow">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="#8494a8"></path>
+        </marker>
+      </defs>
+
+      <!-- main column -->
+      <rect class="n" x="290" y="30" width="280" height="50"></rect>
+      <text class="t" x="430" y="52">Webhook (POST)</text>
+      <text class="s" x="430" y="69">WAHA event on a random path</text>
+
+      <rect class="n" x="290" y="115" width="280" height="50"></rect>
+      <text class="t" x="430" y="137">Filtro de Dados</text>
+      <text class="s" x="430" y="154">normalizes payload fields</text>
+
+      <rect class="f" x="290" y="200" width="280" height="50"></rect>
+      <text class="t" x="430" y="222">Verifica se é Grupo</text>
+      <text class="s" x="430" y="239">chat contains @g.us ?</text>
+
+      <rect class="f" x="290" y="285" width="280" height="50"></rect>
+      <text class="t" x="430" y="307">Verifica se é Mensagem Própria</text>
+      <text class="s" x="430" y="324">isFromMe = true ?</text>
+
+      <rect class="n" x="290" y="370" width="280" height="50"></rect>
+      <text class="t" x="430" y="392">Verifica Cartão Enviado</text>
+      <text class="s" x="430" y="409">Redis GET cartao_enviado:&lt;senderAlt&gt;</text>
+
+      <rect class="f" x="290" y="455" width="280" height="50"></rect>
+      <text class="t" x="430" y="477">Já Recebeu Cartão?</text>
+      <text class="s" x="430" y="494">empty value = never received</text>
+
+      <rect class="a" x="270" y="575" width="320" height="80"></rect>
+      <text class="t" x="430" y="605">Assistente IA — Nero</text>
+      <text class="s" x="430" y="624">agent with Groq model, Redis memory</text>
+      <text class="s" x="430" y="640">and 5 Google Calendar tools</text>
+
+      <rect class="n" x="290" y="740" width="280" height="50"></rect>
+      <text class="t" x="430" y="762">Enviar Resposta via WAHA</text>
+      <text class="s" x="430" y="779">POST /api/sendText (JSON.stringify)</text>
+
+      <!-- ignore branch -->
+      <rect class="i" x="10" y="285" width="200" height="50"></rect>
+      <text class="t" x="110" y="307">Mensagem Ignorada</text>
+      <text class="s" x="110" y="324">no action (noOp)</text>
+
+      <!-- card branch -->
+      <rect class="c" x="10" y="560" width="200" height="50"></rect>
+      <text class="t" x="110" y="582">Buscar Cartão de Visita</text>
+      <text class="s" x="110" y="599">Postgres, latest row</text>
+
+      <rect class="c" x="10" y="640" width="200" height="50"></rect>
+      <text class="t" x="110" y="662">Enviar Cartão via WAHA</text>
+      <text class="s" x="110" y="679">POST /api/sendImage</text>
+
+      <rect class="c" x="10" y="720" width="200" height="50"></rect>
+      <text class="t" x="110" y="742">Marca Cartão Enviado</text>
+      <text class="s" x="110" y="759">Redis SET, no TTL</text>
+
+      <!-- auxiliary -->
+      <rect class="x" x="780" y="520" width="220" height="50"></rect>
+      <text class="t" x="890" y="542">Modelo de Linguagem</text>
+      <text class="s" x="890" y="559">Groq · openai/gpt-oss-120b</text>
+
+      <rect class="x" x="780" y="600" width="220" height="50"></rect>
+      <text class="t" x="890" y="622">Memória de Conversa</text>
+      <text class="s" x="890" y="639">Redis · TTL 1h · 15 messages</text>
+
+      <rect class="x" x="780" y="680" width="220" height="80"></rect>
+      <text class="t" x="890" y="706">Google Calendar tools (5)</text>
+      <text class="s" x="890" y="724">criar · buscar todos · buscar</text>
+      <text class="s" x="890" y="740">específico · atualizar · cancelar</text>
+
+      <!-- edges -->
+      <path class="edge" d="M430,80 V115" marker-end="url(#arrow)"></path>
+      <path class="edge" d="M430,165 V200" marker-end="url(#arrow)"></path>
+      <path class="edge" d="M430,250 V285" marker-end="url(#arrow)"></path>
+      <text class="e" x="438" y="272">direct chat</text>
+
+      <path class="edge" d="M290,225 H250 V298 H210" marker-end="url(#arrow)"></path>
+      <text class="e" x="244" y="218" text-anchor="end">true (@g.us)</text>
+
+      <path class="edge" d="M290,322 H210" marker-end="url(#arrow)"></path>
+      <text class="e" x="284" y="314" text-anchor="end">true</text>
+
+      <path class="edge" d="M430,335 V370" marker-end="url(#arrow)"></path>
+      <text class="e" x="438" y="357">false</text>
+
+      <path class="edge" d="M430,420 V455" marker-end="url(#arrow)"></path>
+
+      <path class="edge" d="M290,480 H110 V560" marker-end="url(#arrow)"></path>
+      <text class="e" x="118" y="520">empty: send card</text>
+
+      <path class="edge" d="M430,505 V575" marker-end="url(#arrow)"></path>
+      <text class="e" x="438" y="545">already has card</text>
+
+      <path class="edge" d="M110,610 V640" marker-end="url(#arrow)"></path>
+      <path class="edge" d="M110,690 V720" marker-end="url(#arrow)"></path>
+      <path class="edge" d="M210,745 H240 V615 H270" marker-end="url(#arrow)"></path>
+
+      <path class="edge" d="M780,545 H700 V600 H590" marker-end="url(#arrow)"></path>
+      <path class="edge" d="M780,625 H590" marker-end="url(#arrow)"></path>
+      <path class="edge" d="M780,720 H700 V650 H590" marker-end="url(#arrow)"></path>
+
+      <path class="edge" d="M430,655 V740" marker-end="url(#arrow)"></path>
+      <text class="e" x="438" y="700">answer</text>
+    </svg>
+  </div>
+
+  <div class="legend">
+    <span><i class="swatch sw-n"></i> general node</span>
+    <span><i class="swatch sw-f"></i> filter / branch (IF)</span>
+    <span><i class="swatch sw-i"></i> discarded message</span>
+    <span><i class="swatch sw-c"></i> business-card path</span>
+    <span><i class="swatch sw-a"></i> AI agent</span>
+    <span><i class="swatch sw-x"></i> agent dependencies</span>
+  </div>
+
+  <footer>
+    Generated by hand for this repository; the authoritative description is
+    <a href="architecture.md">docs/architecture.md</a>.
+    See also <a href="../README.md">README.md</a> and
+    <a href="setup-guide.md">docs/setup-guide.md</a>.
+  </footer>
+</main>
+</body>
+</html>
